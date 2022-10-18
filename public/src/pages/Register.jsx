@@ -13,7 +13,11 @@ function Register() {
     password: "",
     confirmPassword: "",
   });
-
+  
+  useEffect(() => {
+    if(localStorage.getItem('chat-app-user')) {
+      navigate('/');}
+  }, []);
   const navigate = useNavigate()
 
   const handleSubmit = async (event) => {
