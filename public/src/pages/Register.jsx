@@ -86,7 +86,7 @@ function Register() {
 
 const FormContainer = styled.div`
   height: 100vh;
-  widht: 100vw;
+  width: 100vw;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -110,7 +110,7 @@ const FormContainer = styled.div`
     display: flex;
     flex-direction: column;
     gap: 2rem;
-    backgroud: #00000076;
+    background: #00000076;
     border-radius: 2rem;
     padding: 3rem 5rem;
     input {
@@ -133,7 +133,7 @@ const FormContainer = styled.div`
       border: none;
       font-weight: bold;
       cursor: pointer;
-      border-raidus: 0.4rem;
+      border-radius: 0.4rem;
       font-size: 1rem;
       text-transform: uppercase;
       transition: 0.5s ease-in-out;
