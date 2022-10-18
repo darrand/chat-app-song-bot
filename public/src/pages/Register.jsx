@@ -7,19 +7,20 @@ import "react-toastify/dist/ReactToastify.css";
 import axios from 'axios';
 import { registerRoute } from '../utils/APIRoutes';
 function Register() {
+  const navigate = useNavigate()
+
   const [values, setValues] = useState({
     username: "",
     email: "",
     password: "",
     confirmPassword: "",
   });
-  
+
   useEffect(() => {
     if(localStorage.getItem('chat-app-user')) {
       navigate('/');}
   }, []);
-  const navigate = useNavigate()
-
+  
   const handleSubmit = async (event) => {
     event.preventDefault();
     if(handleValidation()) {
