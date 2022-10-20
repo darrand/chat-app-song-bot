@@ -28,7 +28,7 @@ export default function SetAvatar() {
             const {data} = await axios.post(`${setAvatarRoute}/${user._id}`, {
                 image:avatars[selectedAvatar],
             });
-            if(!data.isSet) {
+            if(data.isSet) {
                 user.isAvatarImageSet = true;
                 user.avatarImage = data.image;
                 localStorage.setItem("chat-app-user", JSON.stringify(user))
