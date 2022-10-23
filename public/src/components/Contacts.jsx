@@ -12,7 +12,6 @@ export default function Contacts({ contacts, currentUser, changeChat}) {
         if(currentUser) {
             setCurrentUserImage(currentUser.avatarImage);
             setCurrentUserName(currentUser.username);
-            console.log(currentUser.username)
         }
     },[currentUser])
     const changeCurrentChat = (index, contact) => {

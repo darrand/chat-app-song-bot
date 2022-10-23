@@ -25,7 +25,7 @@ function Chat() {
     }
     checkUser();   
   }, []);
-
+  console.log(currentUser)
   useEffect(() => {
     async function checkAvatar() {
       if (currentUser) {
@@ -40,7 +40,6 @@ function Chat() {
     checkAvatar();
   }, [currentUser])
   const handleChatChange = (chat) => {
-    console.log(chat)
     setCurrentChat(chat)
   }
   return (
@@ -51,7 +50,7 @@ function Chat() {
         isLoaded && currentChat === undefined ? (
           <Welcome currentUser={currentUser}/>
         ) : (
-          <ChatContainer currentChat={currentChat} />
+          <ChatContainer currentChat={currentChat} currentUser={currentUser}/>
         )
       }
         
