@@ -1,9 +1,14 @@
 import React from 'react'
 import styled from 'styled-components'
+import ChatInput from './ChatInput';
 import Logout from './Logout';
+import Messages from './Messages';
 
 export default function ChatContainer({currentChat}) {
-  return (
+    const handleChatMsg = async () => {
+        alert('HOL UP')
+    }
+    return (
     <>
         {currentChat && (
             <Container>
@@ -21,8 +26,8 @@ export default function ChatContainer({currentChat}) {
                 </div>
             <Logout />
             </div>
-            <div className="chat-messages"></div>
-            <div className="chat-input"></div>
+            <Messages />
+            <ChatInput handleChatMsg={handleChatMsg}/>
             </Container>
         )}
     </>
