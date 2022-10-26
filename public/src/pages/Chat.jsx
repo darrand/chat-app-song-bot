@@ -7,6 +7,7 @@ import Contacts from '../components/Contacts';
 import Welcome from '../components/Welcome';
 import ChatContainer from '../components/ChatContainer';
 import { io } from 'socket.io-client';
+import Logout from '../components/Logout';
 
 function Chat() {
   const socket = useRef();

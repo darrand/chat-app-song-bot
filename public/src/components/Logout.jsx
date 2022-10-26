@@ -6,7 +6,7 @@ import { BiPowerOff } from "react-icons/bi"
 
 export default function Logout() {
     const navigate = useNavigate()
-    const handleClick = async () => {
+    const handleClick = () => {
         localStorage.clear()
         navigate("/login")
     }
