@@ -1,22 +1,10 @@
 import React , {useState} from 'react'
 import styled from 'styled-components'
-import Picker from "emoji-picker-react"
 import { IoMdSend } from 'react-icons/io'
-import { BsEmojiSmileFill } from 'react-icons/bs'
 
 export default function ChatInput({ handleChatMsg }) {
-    // const [showEmojiPicker, setShowEmojiPicker] = useState(false);
     const [msg, setMsg] = useState("");
 
-    // const handleEmojiPickerHideShow = () => {
-    //     setShowEmojiPicker(!showEmojiPicker);
-    // };
-    // const handleEmojiClick = (event, emoji) => {
-    //     console.log(emoji)
-    //     let message = msg;
-    //     message += emoji.emoji;
-    //     setMsg(message);
-    // }
     const sendChat = (event) => {
         event.preventDefault();
         if (msg.length>0) {
@@ -27,12 +15,6 @@ export default function ChatInput({ handleChatMsg }) {
   return (
     <Container>
         <div className="button-container">
-            {/* <div className="emoji">
-                <BsEmojiSmileFill onClick={handleEmojiPickerHideShow}/> 
-                {
-                    showEmojiPicker && <Picker onEmojiClick={handleEmojiClick} />
-                }
-            </div> */}
         </div>
         <form className='input-container' onSubmit={(e) => sendChat(e)}>
             <input 
@@ -61,18 +43,6 @@ const Container = styled.div`
         align-items: center;
         color: white;
         gap: 1rem; 
-        /* .emoji {
-            position: relative;
-            svg {
-                font-size: 1.5rem;
-                color: #ffff00c8;
-                cursor: pointer;
-            }
-            .emoji-picker-react {
-                position: absolute;
-                top: -350px;
-            }
-         } */
     }
     .input-container {
         width: 100%;
