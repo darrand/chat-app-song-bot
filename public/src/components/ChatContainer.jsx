@@ -18,7 +18,6 @@ export default function ChatContainer({currentChat, currentUser, socket}) {
                     from: currentUser._id,
                     to: currentChat._id,
                 })
-                console.log(response)
                 setMessages(response.data)
             }
             fetchMessage()

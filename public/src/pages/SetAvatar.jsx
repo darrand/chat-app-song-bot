@@ -21,6 +21,7 @@ export default function SetAvatar() {
         theme: "dark",
     };
     const setProfilePicture = async () => {
+        console.log('selected', selectedAvatar)
         if (selectedAvatar === undefined) {
             toast.error('Please select an Avatar', toastSetting)
         } else {
