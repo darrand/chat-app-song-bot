@@ -1,4 +1,5 @@
 const messageModel = require("../model/messageModel");
+const request = require("request-promise");
 
 module.exports.addMessage = async (req, res, next) => {
     try {
@@ -14,6 +15,30 @@ module.exports.addMessage = async (req, res, next) => {
         next(ex);
     }
 };
+
+module.exports.autoReplyMessage = async (req, res, next) => {
+    try {
+        const {from, to, message} = req.body;
+        const data = await messageModel.create({
+            message: {text: message},
+            users: [from, to],
+            sender: from,
+        })
+        console.log(data)
+        var ansMsg = "Answer"
+        const dataCallBack = await messageModel.create({
+            message: {text: ansMsg},
+            users: [to, from],
+            sender: to, 
+        })
+        console.log(dataCallBack)
+        if (data && dataCallBack) return ({ msg_status: "Message added succesfully.", msg_return: ansMsg})
+        return res.json({ msg: "Failed to add message to the database.", msg_return: "Failed"})
+
+    } catch (e) {
+        next(ex);
+    }
+}
 
 module.exports.getAllMessage = async (req, res, next) => {
     try {
@@ -35,3 +60,5 @@ module.exports.getAllMessage = async (req, res, next) => {
         next(ex);
     }
 };
+
+

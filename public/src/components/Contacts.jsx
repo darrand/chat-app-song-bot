@@ -43,7 +43,7 @@ export default function Contacts({ contacts, currentUser, changeChat}) {
                                         />
                                     </div>
                                     <div className="username">
-                                        <h3>{contact.username}</h3>
+                                        <h3>{`${contact.isBot ? "[BOT] " : ""}${contact.username}`}</h3>
                                     </div>
                                 </div>
                             );

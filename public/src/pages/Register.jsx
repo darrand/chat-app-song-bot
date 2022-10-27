@@ -8,7 +8,7 @@ import axios from 'axios';
 import { registerRoute } from '../utils/APIRoutes';
 function Register() {
   const navigate = useNavigate()
-
+  const [isBot, setIsBot] = useState(false)
   const [values, setValues] = useState({
     username: "",
     email: "",
@@ -19,14 +19,15 @@ function Register() {
   useEffect(() => {
     if(localStorage.getItem('chat-app-user')) {
       navigate('/');}
-  }, []);
+  });
   
   const handleSubmit = async (event) => {
     event.preventDefault();
+    console.log(isBot)
     if(handleValidation()) {
       const { password, username, email } = values;
       const {data} = await axios.post(registerRoute, {
-        username, email, password, 
+        username, email, password, isBot 
       });
       if (data.status === false) {
         toast.error(data.msg, toastSetting)
@@ -65,6 +66,9 @@ function Register() {
     return true;
   }
 
+  const handleIsBot = (event) => {
+    setIsBot(current => !current)
+  }
   const handleChange = (event) => {
     setValues({ ...values, [event.target.name]: event.target.value });
   };
@@ -76,10 +80,16 @@ function Register() {
             <img src={Logo} alt="Logo" />
             <h1>Song Chat App</h1>
           </div>
-          <input type="text" placeholder='Username' name='username' onChange={(e)=>handleChange(e)}/>
-          <input type="email" placeholder='Email' name='email' onChange={(e)=>handleChange(e)}/>
-          <input type="password" placeholder='Password' name='password' onChange={(e)=>handleChange(e)}/>
-          <input type="password" placeholder='Confirm Password' name='confirmPassword' onChange={(e)=>handleChange(e)}/>
+          <input className='text-field' type="text" placeholder='Username' name='username' onChange={(e)=>handleChange(e)}/>
+          <input className='text-field' type="email" placeholder='Email' name='email' onChange={(e)=>handleChange(e)}/>
+          <input className='text-field' type="password" placeholder='Password' name='password' onChange={(e)=>handleChange(e)}/>
+          <input className='text-field' type="password" placeholder='Confirm Password' name='confirmPassword' onChange={(e)=>handleChange(e)}/>
+          <div className="checkbox-bot">
+            <div className="isbot-message">
+              isBot?
+            </div>
+            <input className="checkBoxField" type="checkbox" value={isBot} name="isBot" onChange={(e)=>handleIsBot(e)}/>
+          </div>
           <button type='submit'>Create User</button>
           <span>Already have an account ?  <Link to="/login">Login</Link></span>
         </form> 
@@ -118,7 +128,7 @@ const FormContainer = styled.div`
     background: #00000076;
     border-radius: 2rem;
     padding: 3rem 5rem;
-    input {
+    .text-field {
       background-color: transparent;
       padding: 1rem;
       border: 0.1rem solid #4e0eff;
@@ -130,6 +140,16 @@ const FormContainer = styled.div`
         border: 0.1rem solid #997af0;
         outline: none;
       }
+    }
+    .checkbox-bot {
+      display: flex-start;
+      gap: 1rem;
+      .isbot-message {
+        padding-bottom: 0.5rem;
+        color: white;
+      }
+    }
+
     }
     button {
       background-color: #997aa3;
@@ -156,7 +176,6 @@ const FormContainer = styled.div`
         font-weight: bold;
       }
     }
-  }
 `;
 
 export default Register;

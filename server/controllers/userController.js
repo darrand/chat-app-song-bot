@@ -3,7 +3,7 @@ const bcrypt = require("bcrypt");
 
 module.exports.register = async (req,res,next) => {
     try {
-        const {username, email, password} = req.body
+        const {username, email, password, isBot} = req.body
         const usernameCheck = await User.findOne( {username} );
         if (usernameCheck) {
             return res.json({ msg: "Username already used" ,status: false})
@@ -12,11 +12,13 @@ module.exports.register = async (req,res,next) => {
         if (emailCheck) {
             return res.json({ msg: "Email already in use" ,status: false})
         }
+        
         const hashedPassword = await bcrypt.hash(password, 10);
         const user = await User.create({
             email, 
             username,
             password: hashedPassword,
+            isBot: isBot,
         });
         delete user.password;
         return res.json({ status: true, user})
@@ -68,6 +70,7 @@ module.exports.getAllUsers = async (req,res,next) => {
             "username",
             "avatarImage",
             "_id",
+            "isBot",
         ]);
         return res.json(users)
     } catch(ex) {

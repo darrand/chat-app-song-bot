@@ -1,7 +1,7 @@
 import axios from 'axios';
 import React, {useState, useEffect, useRef} from 'react'
 import styled from 'styled-components'
-import { getAllMessagesRoute, sendMessageRoute } from '../utils/APIRoutes';
+import { botMessagesRoute, getAllMessagesRoute, sendMessageRoute } from '../utils/APIRoutes';
 import ChatInput from './ChatInput';
 import Logout from './Logout';
 import { v4 as uuidv4 } from "uuid";
@@ -13,31 +13,54 @@ export default function ChatContainer({currentChat, currentUser, socket}) {
     useEffect(() => {
         if (currentChat) {
             const fetchMessage = async () => {
-                console.log()
                 const response = await axios.post(getAllMessagesRoute, {
                     from: currentUser._id,
                     to: currentChat._id,
                 })
+                console.log(response)
                 setMessages(response.data)
             }
             fetchMessage()
         }
     }, [currentChat])
     const handleChatMsg = async (msg) => {
-        await axios.post(sendMessageRoute, {
-            from: currentUser._id,
-            to: currentChat._id, 
-            message: msg,
-        })
-        socket.current.emit("send-msg", {
-            to: currentChat._id,
-            from: currentUser._id,
-            message: msg,
-        })
-
-        const msgs = [...messages]
-        msgs.push( { fromSelf:true, message: msg} )
-        setMessages(msgs)
+        if (!currentChat.isBot) {
+            await axios.post(sendMessageRoute, {
+                from: currentUser._id,
+                to: currentChat._id, 
+                message: msg,
+            })
+            socket.current.emit("send-msg", {
+                to: currentChat._id,
+                from: currentUser._id,
+                message: msg,
+            })
+            
+            const msgs = [...messages]
+            msgs.push( { fromSelf:true, message: msg} )
+            setMessages(msgs)
+        } else {
+            console.log('in')
+            const response = await axios.post(botMessagesRoute, {
+                from: currentUser._id,
+                to: currentChat._id,
+                message: msg,
+            })
+            socket.current.emit("send-msg", {
+                to: currentChat._id,
+                from: currentUser._id,
+                message: msg,
+            })
+            // socket.current.emit("send-msg", {
+            //     to: currentUser._id,
+            //     from: currentChat._id,
+            //     message: response
+            // })
+            const msgs = [...messages]
+            msgs.push( { fromSelf:true, message: msg} )
+            // msgs.push( { fromSelf:false, message: response})
+            setMessages(msgs)
+        }
     }
 
     useEffect(() => {
@@ -55,10 +78,9 @@ export default function ChatContainer({currentChat, currentUser, socket}) {
     useEffect(() =>{
         scrollRef.current?.scrollIntoView({ behaviour: "smooth" })
     }, [messages])
-
     return (
     <>
-        {
+        {       
         currentChat && (
             <Container>
             <div className="chat-header">
@@ -70,15 +92,15 @@ export default function ChatContainer({currentChat, currentUser, socket}) {
                     />
                     </div>
                     <div className="username">
-                        <h3>{currentChat.username}</h3>
+                        <h3>{`${currentChat.isBot ? "[BOT] " : ""}${currentChat.username}`}</h3>
                     </div>
                 </div>
                 <Logout />
             </div>
             <div className="chat-messages">
-                {messages.map((message) => {
+                {messages.map((message, idx) => {
                     return (
-                        <div ref={scrollRef} key={uuidv4}>
+                        <div ref={scrollRef} key={idx}>
                             <div 
                                 className={`message ${message.fromSelf ? "sended":"received"}`}
                             >

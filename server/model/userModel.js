@@ -19,6 +19,10 @@ const userSchema = new mongoose.Schema({
         require: true,
         min: 8,
     },
+    isBot : {
+      type: Boolean,
+      default: false,  
+    },
     isAvatarImageSet: {
         type: Boolean,
         default: false,
