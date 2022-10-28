@@ -30,6 +30,7 @@ export default function ChatContainer({currentChat, currentUser, socket}) {
                 to: currentChat._id, 
                 message: msg,
             })
+            console.log('noBot')
             socket.current.emit("send-msg", {
                 to: currentChat._id,
                 from: currentUser._id,
@@ -40,25 +41,21 @@ export default function ChatContainer({currentChat, currentUser, socket}) {
             msgs.push( { fromSelf:true, message: msg} )
             setMessages(msgs)
         } else {
-            console.log('in')
-            const response = await axios.post(botMessagesRoute, {
-                from: currentUser._id,
-                to: currentChat._id,
-                message: msg,
-            })
+            const msgs = [...messages]
+            msgs.push( { fromSelf:true, message: msg} )
             socket.current.emit("send-msg", {
                 to: currentChat._id,
                 from: currentUser._id,
                 message: msg,
             })
-            // socket.current.emit("send-msg", {
-            //     to: currentUser._id,
-            //     from: currentChat._id,
-            //     message: response
-            // })
-            const msgs = [...messages]
-            msgs.push( { fromSelf:true, message: msg} )
-            // msgs.push( { fromSelf:false, message: response})
+            const response = await axios.post(botMessagesRoute, {
+                from: currentUser._id,
+                to: currentChat._id,
+                message: msg,
+            })
+            
+            
+            msgs.push( { fromSelf:false, message: response.data.msg_return})
             setMessages(msgs)
         }
     }
@@ -69,7 +66,7 @@ export default function ChatContainer({currentChat, currentUser, socket}) {
                 setArrivalMessage({ fromSelf:false, message: msg})
             })
         }
-    }, [])
+    })
 
     useEffect(() =>{
         arrivalMessage && setMessages((prev) => [...prev, arrivalMessage])

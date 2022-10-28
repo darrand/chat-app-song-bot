@@ -15,28 +15,66 @@ module.exports.addMessage = async (req, res, next) => {
         next(ex);
     }
 };
+function options (jsonBody, uri) {
+    return ({
+        method: 'POST',
+        uri: `http://127.0.0.1:6000/${uri}`,
+        body: jsonBody,
+        json: true,
+    })
+}
+async function getBotAnswer(message) {
+    try {
+        var userPrompt = message.split(";")
+        var ansMsg = "Hey this is songbot!!\n to conjure commands refer to this template [title/artist/lyrics/artist-title/title-lyrics/artist-lyrics];[corresponding search];[corresponding search]\n e.g title;One Step Closer, artist-lyrics;Linkin Park;I tried so hard and got so far\n Do note that the order of the command matters"
+        if (userPrompt.length == 2) {
+            var uriBody = userPrompt[0]
+            var jsonDict = {}
+            jsonDict[userPrompt[0]] = userPrompt[1] 
+        } else if (userPrompt.length == 3) {
+            var uriBody = userPrompt[0]
+            var uriSplit = uriBody.split('-')
+            if (uriSplit.length == 1) throw "wrong template"
+            var jsonDict = {}
+            jsonDict[uriSplit[0]] = userPrompt[1]
+            jsonDict[uriSplit[1]] = userPrompt[2]
+        } else {
+            return ansMsg
+        }
+
+        const sendRequest = await request(options(jsonDict, uriBody))
+        return sendRequest
+
+    } catch (e) {
+        return "Something went wrong please try again!"
+    }
+}
 
 module.exports.autoReplyMessage = async (req, res, next) => {
     try {
         const {from, to, message} = req.body;
+        
+        const getBotMessage = await getBotAnswer(message)
+        
         const data = await messageModel.create({
             message: {text: message},
             users: [from, to],
             sender: from,
         })
-        console.log(data)
-        var ansMsg = "Answer"
+        
         const dataCallBack = await messageModel.create({
-            message: {text: ansMsg},
+            message: {text: getBotMessage},
             users: [to, from],
             sender: to, 
         })
-        console.log(dataCallBack)
-        if (data && dataCallBack) return ({ msg_status: "Message added succesfully.", msg_return: ansMsg})
-        return res.json({ msg: "Failed to add message to the database.", msg_return: "Failed"})
 
+        if (data && dataCallBack) {
+            return res.json({ msg_status: "Message added succesfully.", msg_return: getBotMessage})
+        }
+        return res.json({ msg: "Failed to add message to the database.", msg_return: "Failed"})
     } catch (e) {
-        next(ex);
+        console.log(e)
+        next(next);
     }
 }
 
