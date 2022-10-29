@@ -1,6 +1,5 @@
 const messageModel = require("../model/messageModel");
 const request = require("request-promise");
-
 module.exports.addMessage = async (req, res, next) => {
     try {
         const {from, to, message} = req.body;
@@ -26,7 +25,11 @@ function options (jsonBody, uri) {
 async function getBotAnswer(message) {
     try {
         var userPrompt = message.split(";")
-        var ansMsg = "Hey this is songbot!!\n to conjure commands refer to this template [title/artist/lyrics/artist-title/title-lyrics/artist-lyrics];[corresponding search];[corresponding search]\n e.g title;One Step Closer, artist-lyrics;Linkin Park;I tried so hard and got so far\n Do note that the order of the command matters"
+        var ansMsg = 
+        `Hey this is songbot!!\n
+        to conjure commands refer to this template [title/artist/lyrics/artist-title/title-lyrics/artist-lyrics];[corresponding search];[corresponding search]\n
+        e.g. \ntitle;One Step Closer \nartist-lyrics;Linkin Park;I tried so hard and got so far\n
+        Do note that the order of the command matters`
         if (userPrompt.length == 2) {
             var uriBody = userPrompt[0]
             var jsonDict = {}
@@ -41,11 +44,14 @@ async function getBotAnswer(message) {
         } else {
             return ansMsg
         }
-
+        
         const sendRequest = await request(options(jsonDict, uriBody))
+        var response = JSON.parse(sendRequest)
+        console.log(response['track_name'])
         return sendRequest
 
     } catch (e) {
+        console.log(e)
         return "Something went wrong please try again!"
     }
 }
@@ -54,14 +60,12 @@ module.exports.autoReplyMessage = async (req, res, next) => {
     try {
         const {from, to, message} = req.body;
         
-        const getBotMessage = await getBotAnswer(message)
-        
         const data = await messageModel.create({
             message: {text: message},
             users: [from, to],
             sender: from,
         })
-        
+        const getBotMessage = await getBotAnswer(message)
         const dataCallBack = await messageModel.create({
             message: {text: getBotMessage},
             users: [to, from],

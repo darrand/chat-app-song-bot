@@ -43,17 +43,17 @@ export default function ChatContainer({currentChat, currentUser, socket}) {
         } else {
             const msgs = [...messages]
             msgs.push( { fromSelf:true, message: msg} )
-            socket.current.emit("send-msg", {
-                to: currentChat._id,
-                from: currentUser._id,
-                message: msg,
-            })
+            
             const response = await axios.post(botMessagesRoute, {
                 from: currentUser._id,
                 to: currentChat._id,
                 message: msg,
             })
-            
+            socket.current.emit("send-msg", {
+                to: currentChat._id,
+                from: currentUser._id,
+                message: msg,
+            })
             
             msgs.push( { fromSelf:false, message: response.data.msg_return})
             setMessages(msgs)
@@ -178,11 +178,17 @@ const Container = styled.div`
             .content {
                 background-color: #4f04ff21;
             }
+            p {
+                white-space: pre-line;
+            }
         }
         .received {
             justify-content: flex-start;
             .content {
                 background-color: #9900ff20;
+            }
+            p {
+                white-space: pre-line;
             }
         }
     }
