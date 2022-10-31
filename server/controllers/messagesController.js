@@ -22,6 +22,31 @@ function options (jsonBody, uri) {
         json: true,
     })
 }
+
+function formatBotMessage (jsonMsg) {
+    var arrayLen = Object.keys(jsonMsg['track_id']).length
+    var messageReturn = "Did you search for these songs?\n"
+    for (let i = 0; i < arrayLen; i++) {
+        if (i === 4) break;
+        const songName = jsonMsg['track_name'][i.toString()]
+        const songArtist = jsonMsg['track_artist'][i.toString()]
+        const genre = jsonMsg['playlist_genre'][i.toString()]
+        const lyrics = jsonMsg['lyrics'][i.toString()]
+        let lyricSample = ""
+        var arrLyrics = lyrics.split(" ")
+        for (let j = 0; j <= 9; j++) {
+            if (j != 9) {
+                lyricSample = lyricSample.concat(`${arrLyrics[j]} `)
+            } else {
+                lyricSample = lyricSample.concat(`${arrLyrics[j]}...`)
+            }
+        }
+        const songEntry = `${i+1}. title: ${songName}, artist: ${songArtist}, genre: ${genre}\nsample lyrics: \"${lyricSample}\"\n`
+        messageReturn = messageReturn.concat(songEntry)
+    }
+    return messageReturn
+}
+
 async function getBotAnswer(message) {
     try {
         var userPrompt = message.split(";")
@@ -46,10 +71,9 @@ async function getBotAnswer(message) {
         }
         
         const sendRequest = await request(options(jsonDict, uriBody))
-        var response = JSON.parse(sendRequest)
-        console.log(response['track_name'])
-        return sendRequest
-
+        var response = JSON.parse(sendRequest)   
+        var returnMsg = formatBotMessage(response)
+        return returnMsg
     } catch (e) {
         console.log(e)
         return "Something went wrong please try again!"
