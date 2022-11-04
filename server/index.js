@@ -29,7 +29,7 @@ const server = app.listen(process.env.PORT, () => {
 
 const io = socket(server, {
     cors: {
-        origin: "http://localhost:3000", // change this in deployment
+        origin: process.env.ORIGIN, // change this in deployment
         credentials: true,
     },
 });

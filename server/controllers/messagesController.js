@@ -1,5 +1,9 @@
+const path = require('path');
 const messageModel = require("../model/messageModel");
 const request = require("request-promise");
+require('dotenv').config({path: path.resolve(__dirname,'../.env')})
+
+
 module.exports.addMessage = async (req, res, next) => {
     try {
         const {from, to, message} = req.body;
@@ -15,23 +19,26 @@ module.exports.addMessage = async (req, res, next) => {
     }
 };
 function options (jsonBody, uri) {
+    const staticBotURL= process.env.BOT_SITE 
     return ({
         method: 'POST',
-        uri: `http://127.0.0.1:6000/${uri}`,
+        uri: `${staticBotURL}/${uri}`, // Change this to the tunnel
         body: jsonBody,
         json: true,
     })
 }
 
 function formatBotMessage (jsonMsg) {
-    var arrayLen = Object.keys(jsonMsg['track_id']).length
+    const trackKeys = Object.keys(jsonMsg['track_id'])
+    const arrayLen = trackKeys.length
     var messageReturn = "Did you search for these songs?\n"
     for (let i = 0; i < arrayLen; i++) {
         if (i === 4) break;
-        const songName = jsonMsg['track_name'][i.toString()]
-        const songArtist = jsonMsg['track_artist'][i.toString()]
-        const genre = jsonMsg['playlist_genre'][i.toString()]
-        const lyrics = jsonMsg['lyrics'][i.toString()]
+        var trackId = trackKeys[i]
+        const songName = jsonMsg['track_name'][trackId]
+        const songArtist = jsonMsg['track_artist'][trackId]
+        const genre = jsonMsg['playlist_genre'][trackId]
+        const lyrics = jsonMsg['lyrics'][trackId]
         let lyricSample = ""
         var arrLyrics = lyrics.split(" ")
         for (let j = 0; j <= 9; j++) {
@@ -52,7 +59,8 @@ async function getBotAnswer(message) {
         var userPrompt = message.split(";")
         var ansMsg = 
         `Hey this is songbot!!\n
-        to conjure commands refer to this template [title/artist/lyrics/artist-title/title-lyrics/artist-lyrics];[corresponding search];[corresponding search]\n
+        I can search songs from around 10000+ english Spotify songs dated 2020 and earlier\n
+        to conjure commands you may refer to this template [title/artist/lyrics/artist-title/title-lyrics/artist-lyrics];[corresponding search];[corresponding search]\n
         e.g. \ntitle;One Step Closer \nartist-lyrics;Linkin Park;I tried so hard and got so far\n
         Do note that the order of the command matters`
         if (userPrompt.length == 2) {
