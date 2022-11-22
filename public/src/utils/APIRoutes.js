@@ -1,5 +1,6 @@
 // export const host = "http://localhost:5001"; // change this in deployment
-export const host = "https://chat-app-songbot.herokuapp.com"
+// export const host = "https://chat-app-songbot.herokuapp.com"
+export const host = "https://songbot-chatapp-backend-production.up.railway.app"
 export const registerRoute = `${host}/api/auth/register`
 export const loginRoute = `${host}/api/auth/login`
 export const setAvatarRoute = `${host}/api/auth/setAvatar`
